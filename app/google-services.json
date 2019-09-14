@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "948341064586",
+    "firebase_url": "https://fmlm-82ecd.firebaseio.com",
+    "project_id": "fmlm-82ecd",
+    "storage_bucket": "fmlm-82ecd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:948341064586:android:fbbefcc4b62177cd297e73",
+        "android_client_info": {
+          "package_name": "com.example.fmlm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "948341064586-shudrn230bdtc5gvfdls5d7f8amvp5ms.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmWnYEfOXnFzfbhrvasPPnLjKT0GeltuA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "948341064586-shudrn230bdtc5gvfdls5d7f8amvp5ms.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
