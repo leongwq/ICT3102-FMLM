@@ -1,6 +1,7 @@
 package com.example.fmlm.fragment.routing
 
 import android.Manifest
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
@@ -26,6 +27,7 @@ import androidx.core.content.PermissionChecker.checkCallingOrSelfPermission
 
 import com.example.fmlm.R
 import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import org.osmdroid.bonuspack.location.GeocoderNominatim
@@ -163,64 +165,78 @@ class RoutingComponentFragment : Fragment() {
         hasNetwork = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
         Log.e("first update location", "first updating location (gps)")
         val listener = MyListener()
-        if(hasGPS || hasNetwork)
-        {
-            //can use gps
-            if(hasGPS){
-                Log.e("WE HAVE GPS","GPS")
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5.0f, listener)
-                val localGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                if(localGPS != null) {
-                    currentLocation = localGPS
-                    Log.e("gps loc lat", currentLocation!!.latitude.toString())
-                    Log.e("gps loc long", currentLocation!!.longitude.toString())
+        //check if permission is granted first
+        if (isPermissionGranted(ACCESS_COARSE_LOCATION)) {
+            // we have permissions
+            if(hasGPS || hasNetwork)
+            {
+                //can use gps
+                if(hasGPS){
+                    Log.e("WE HAVE GPS","GPS")
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5.0f, listener)
+                    val localGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                    if(localGPS != null) {
+                        currentLocation = localGPS
+                        Log.e("gps loc lat", currentLocation!!.latitude.toString())
+                        Log.e("gps loc long", currentLocation!!.longitude.toString())
+                    }
                 }
-            }
-            if(hasNetwork){
-                Log.e("WE HAVE GPS","GPS")
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5.0f, object:
-                    LocationListener {
-                    override fun onLocationChanged(location: Location?) {
-                        if(location != null)
-                        currentLocationNetwork = location
-                        val handler = Handler()
-                        val r = updateRoutes()
-                        handler.postDelayed(r, 0)
-                        //updateRoute()
+                if(hasNetwork){
+                    Log.e("WE HAVE GPS","GPS")
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5.0f, object:
+                        LocationListener {
+                        override fun onLocationChanged(location: Location?) {
+                            if(location != null)
+                                currentLocationNetwork = location
+                            val handler = Handler()
+                            val r = updateRoutes()
+                            handler.postDelayed(r, 0)
+                            //updateRoute()
+                        }
+
+                        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+                        }
+
+                        override fun onProviderEnabled(provider: String?) {
+                        }
+
+                        override fun onProviderDisabled(provider: String?) {
+                        }
+
+                    })
+                    val localNetworl = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                    if(localNetworl != null) {
+                        currentLocationNetwork = localNetworl
+                        Log.e("gps loc lat", currentLocationNetwork!!.latitude.toString())
+                        Log.e("gps loc long", currentLocationNetwork!!.longitude.toString())
                     }
-
-                    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-                    }
-
-                    override fun onProviderEnabled(provider: String?) {
-                    }
-
-                    override fun onProviderDisabled(provider: String?) {
-                    }
-
-                })
-                val localNetworl = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                if(localNetworl != null) {
-                    currentLocationNetwork = localNetworl
-                    Log.e("gps loc lat", currentLocationNetwork!!.latitude.toString())
-                    Log.e("gps loc long", currentLocationNetwork!!.longitude.toString())
-                }
-            }
-
-            if(currentLocation != null && currentLocationNetwork != null){
-                if(currentLocation!!.accuracy > currentLocationNetwork!!.accuracy){
-                    //take network
-                    currentLocation = currentLocationNetwork
-                    Log.e("gps loc lat", currentLocation!!.latitude.toString())
-                    Log.e("gps loc long", currentLocation!!.longitude.toString())
                 }
 
+                if(currentLocation != null && currentLocationNetwork != null){
+                    if(currentLocation!!.accuracy > currentLocationNetwork!!.accuracy){
+                        //take network
+                        currentLocation = currentLocationNetwork
+                        Log.e("gps loc lat", currentLocation!!.latitude.toString())
+                        Log.e("gps loc long", currentLocation!!.longitude.toString())
+                    }
+
+                }
             }
+            //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0.0f, listener)
+            //currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         }
-        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0.0f, listener)
-        //currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-
+        else{
+            //no permissions
+            Log.e("orph", "no-permission")
+        }
     }
+
+    //check if permission is granted
+    private fun isPermissionGranted(permission:String):Boolean =
+        ContextCompat.checkSelfPermission(
+            this.context!!,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
 
     private fun checkPermission(permissionArray:Array<String>):Boolean{
         for(i in permissionArray){
