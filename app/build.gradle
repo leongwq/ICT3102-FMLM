@@ -24,6 +24,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        defaultConfig {
+            testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+            /*testInstrumentationRunner "com.example.fmlm.ExampleInstrumentedTest"*/
+        }
     }
 }
 
@@ -47,6 +52,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    //added by Jing Hao
+    androidTestImplementation 'androidx.test:rules:1.1.0'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+
 
     // OSMDroid
     implementation "org.osmdroid:osmdroid-android:$osmdroid_version"

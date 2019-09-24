@@ -151,7 +151,7 @@ class RoutingComponentFragment : Fragment() {
         Log.e("map pin", p.longitude.toString())
         Log.e("map pin", p.latitude.toString())
         curDestination = p
-        val handler = Handler();
+        val handler = Handler()
         val r = setRoutes()
         handler.postDelayed(r, 0)
     }
@@ -636,7 +636,7 @@ class RoutingComponentFragment : Fragment() {
                 Toast.makeText(activity, "Address not found!", Toast.LENGTH_SHORT).show()
             else {
                 val address: Address = geoResults.first()
-                val boundingbox: BoundingBox? = address.extras.getParcelable("BoundingBox");
+                val boundingbox: BoundingBox? = address.extras.getParcelable("boundingbox")
                 mapView.zoomToBoundingBox(boundingbox, true)
             }
         } catch (e: Exception) {
