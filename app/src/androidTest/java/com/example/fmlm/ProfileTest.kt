@@ -5,9 +5,7 @@ import android.view.ViewGroup
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.runner.AndroidJUnit4
 
 import org.junit.Test
@@ -25,7 +23,7 @@ import org.junit.Before
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 @RunWith(AndroidJUnit4::class)
-class ExampleInstrumentedTest {
+class ProfileTest {
 
     //Original test
     /*
@@ -46,12 +44,6 @@ class ExampleInstrumentedTest {
     @Before
     fun init() {
         val transaction = rule.getActivity().getSupportFragmentManager().beginTransaction()
-        /* Transaction code that isn't needed atm
-        var fragment: Fragment = ProfileComponentFragment()
-        transaction.replace(R.id.nav_host_fragment, fragment)
-        transaction.addToBackStack(null)
-        transaction.commit()
-        //transaction.commitAllowingStateLoss()*/
     }
 
     @Test
@@ -71,13 +63,17 @@ class ExampleInstrumentedTest {
         //close keyboard before any out of activity calls or you'll get some error about event injection - might need to sleep on slow devices
         onView(withId(R.id.edittext_reason)).perform(typeText("haha")).perform(closeSoftKeyboard())
         //submit
-        onView(withId(R.id.button_submit)).perform(click())
+        for(i in 1..3) {
+            onView(withId(R.id.button_submit)).perform(click())
+        }
+        //add sleep or some won't be sent till next run
+        Thread.sleep(5000)
     }
 
     /**
      * Gets all the views available to the test. Good for debugging purposes
      */
-    @Test
+    //@Test
     fun getAllViewsInTest() {
         //pretty long chain
         System.out.println(getViewTree(rule.getActivity().getWindow().getDecorView().getRootView() as ViewGroup))
