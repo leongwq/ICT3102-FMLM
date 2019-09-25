@@ -56,8 +56,6 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.1.0'
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
-
-
     // OSMDroid
     implementation "org.osmdroid:osmdroid-android:$osmdroid_version"
     implementation "org.osmdroid:osmdroid-wms:$osmdroid_version"

@@ -1,22 +1,20 @@
 package com.example.fmlm
 
-import android.content.Intent
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.test.InstrumentationRegistry
+import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.runner.AndroidJUnit4
 
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import org.junit.Assert.*
 import androidx.test.rule.ActivityTestRule
-import com.example.fmlm.fragment.profile.ProfileComponentFragment
+import org.hamcrest.CoreMatchers.*
 import org.junit.Rule
 import org.junit.Before
 
@@ -40,6 +38,7 @@ class ExampleInstrumentedTest {
     }*/
 
 
+    //launch Main activity
     @Rule @JvmField
     var rule: ActivityTestRule<MainActivity> =
         ActivityTestRule(MainActivity::class.java, false, true)
@@ -47,18 +46,32 @@ class ExampleInstrumentedTest {
     @Before
     fun init() {
         val transaction = rule.getActivity().getSupportFragmentManager().beginTransaction()
+        /* Transaction code that isn't needed atm
         var fragment: Fragment = ProfileComponentFragment()
         transaction.replace(R.id.nav_host_fragment, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
+        //transaction.commitAllowingStateLoss()*/
     }
 
     @Test
-    fun textViewTest() {
-        /*
-        onView(withId(R.id.edittext_username)).perform(typeText("Steve")) -- still can't be found in view of test...
-        onView(withId(R.id.button_register)).perform(click())
-        //onView(withText("Hello Steve!")).check(matches(isDisplayed()))*/
+    fun profileTest() {
+        //textviews
+        onView(withId(R.id.edittext_name)).perform(typeText("Orph"))
+        //close keyboard here because edittext_reason is hidden by keyboard
+        onView(withId(R.id.edittext_age)).perform(typeText("24")).perform(closeSoftKeyboard())
+        //spinner
+        onView(withId(R.id.spinner_gender)).perform(click())
+        onData(allOf(`is`(instanceOf(String::class.java)), `is`("Male"))).perform(click())
+        //onView(withId(R.id.spinner_gender)).check(matches(withText(containsString("Male"))))
+        //spinner 2
+        onView(withId(R.id.spinner_method)).perform(click())
+        onData(allOf(`is`(instanceOf(String::class.java)), `is`("Taxi"))).perform(click())
+        //onView(withId(R.id.spinner_method)).check(matches(withText(containsString("Taxi"))))
+        //close keyboard before any out of activity calls or you'll get some error about event injection - might need to sleep on slow devices
+        onView(withId(R.id.edittext_reason)).perform(typeText("haha")).perform(closeSoftKeyboard())
+        //submit
+        onView(withId(R.id.button_submit)).perform(click())
     }
 
     /**
