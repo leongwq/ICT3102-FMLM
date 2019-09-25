@@ -2,10 +2,7 @@ package com.example.fmlm
 
 import androidx.fragment.app.Fragment
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
-import androidx.test.espresso.action.ViewActions.typeText
-import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.rule.ActivityTestRule
 import androidx.test.runner.AndroidJUnit4
@@ -34,8 +31,14 @@ class RoutingTest {
     }
 
     @Test
-    fun useAppContext() {
-        onView(withId(R.id.TextInputEditText)).perform(typeText("Portland")).perform(closeSoftKeyboard())
-        onView(withId(R.id.button_confirm)).perform(ViewActions.click())
+    fun getFiveCities() {
+        var cities: Array<String> = arrayOf("Phoenix", "Portland", "Seattle", "Houston", "Miami")
+        //can be used for stress testing maybe???
+        for (i in 1..10){
+            onView(withId(R.id.TextInputEditText)).perform(replaceText(cities[(i-1)%5])).perform(closeSoftKeyboard())
+            onView(withId(R.id.button_confirm)).perform(click())
+        }
+        //onView(withId(R.id.map)).perform(swipeUp())
+        //Thread.sleep(5000)
     }
 }
