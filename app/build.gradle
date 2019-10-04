@@ -55,9 +55,7 @@ dependencies {
     //added by Jing Hao
     androidTestImplementation 'androidx.test:rules:1.1.0'
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    androidTestImplementation 'com.android.support.test:runner:0.2'
-    androidTestImplementation 'com.android.support.test:rules:0.2'
-    androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 
     // OSMDroid
     implementation "org.osmdroid:osmdroid-android:$osmdroid_version"

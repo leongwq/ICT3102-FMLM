@@ -50,6 +50,8 @@ class MapTest {
 
     }
 
+    val amount = 300 //change this to change the amount of zoom
+
     fun pinchOut(): ViewAction {
         return object : ViewAction {
             override fun getConstraints(): Matcher<View> {
@@ -65,7 +67,7 @@ class MapTest {
 
                 val startDelta = 0 // How far from the center point each finger should start
                 val endDelta =
-                    300 // How far from the center point each finger should end (note: Be sure to have this large enough so that the gesture is recognized!)
+                    amount // How far from the center point each finger should end (note: Be sure to have this large enough so that the gesture is recognized!)
 
                 val startPoint1 = Point(middlePosition.x - startDelta, middlePosition.y)
                 val startPoint2 = Point(middlePosition.x + startDelta, middlePosition.y)
@@ -91,7 +93,7 @@ class MapTest {
                 val middlePosition = getCenterPoint(view)
 
                 val startDelta =
-                    300 // How far from the center point each finger should start (note: Be sure to have this large enough so that the gesture is recognized!)
+                    amount // How far from the center point each finger should start (note: Be sure to have this large enough so that the gesture is recognized!)
                 val endDelta = 0 // How far from the center point each finger should end
 
                 val startPoint1 = Point(middlePosition.x - startDelta, middlePosition.y)
