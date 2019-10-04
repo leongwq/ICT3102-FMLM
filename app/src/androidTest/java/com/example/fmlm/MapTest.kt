@@ -41,8 +41,8 @@ class MapTest {
 
     @Test
     fun pinch() {
-            Espresso.onView(ViewMatchers.withId(R.id.TextInputEditText))
-                .perform(ViewActions.replaceText("hoho")).perform(ViewActions.closeSoftKeyboard())
+        Espresso.onView(ViewMatchers.withId(R.id.TextInputEditText))
+            .perform(ViewActions.replaceText("hoho")).perform(ViewActions.closeSoftKeyboard())
         Espresso.onView(ViewMatchers.withId(R.id.map)).perform(pinchOut())
         Thread.sleep(5000)
         Espresso.onView(ViewMatchers.withId(R.id.map)).perform(pinchIn())
@@ -66,9 +66,7 @@ class MapTest {
                 val middlePosition = getCenterPoint(view)
 
                 val startDelta = 0 // How far from the center point each finger should start
-                val endDelta =
-                    amount // How far from the center point each finger should end (note: Be sure to have this large enough so that the gesture is recognized!)
-
+                val endDelta = amount
                 val startPoint1 = Point(middlePosition.x - startDelta, middlePosition.y)
                 val startPoint2 = Point(middlePosition.x + startDelta, middlePosition.y)
                 val endPoint1 = Point(middlePosition.x - endDelta, middlePosition.y)
@@ -91,16 +89,12 @@ class MapTest {
 
             override fun perform(uiController: UiController, view: View) {
                 val middlePosition = getCenterPoint(view)
-
-                val startDelta =
-                    amount // How far from the center point each finger should start (note: Be sure to have this large enough so that the gesture is recognized!)
-                val endDelta = 0 // How far from the center point each finger should end
-
+                val startDelta = amount
+                val endDelta = 0
                 val startPoint1 = Point(middlePosition.x - startDelta, middlePosition.y)
                 val startPoint2 = Point(middlePosition.x + startDelta, middlePosition.y)
                 val endPoint1 = Point(middlePosition.x - endDelta, middlePosition.y)
                 val endPoint2 = Point(middlePosition.x + endDelta, middlePosition.y)
-
                 performPinch(uiController, startPoint1, startPoint2, endPoint1, endPoint2)
             }
         }
@@ -133,13 +127,10 @@ class MapTest {
         var eventY1: Float
         var eventX2: Float
         var eventY2: Float
-
         eventX1 = startPoint1.x.toFloat()
         eventY1 = startPoint1.y.toFloat()
         eventX2 = startPoint2.x.toFloat()
         eventY2 = startPoint2.y.toFloat()
-
-        // Specify the property for the two touch points
         val properties = arrayOfNulls<MotionEvent.PointerProperties>(2)
         val pp1 = MotionEvent.PointerProperties()
         pp1.id = 0
@@ -147,12 +138,8 @@ class MapTest {
         val pp2 = MotionEvent.PointerProperties()
         pp2.id = 1
         pp2.toolType = MotionEvent.TOOL_TYPE_FINGER
-
         properties[0] = pp1
         properties[1] = pp2
-
-        // Specify the coordinations of the two touch points
-        // NOTE: you MUST set the pressure and size value, or it doesn't work
         val pointerCoords = arrayOfNulls<MotionEvent.PointerCoords>(2)
         val pc1 = MotionEvent.PointerCoords()
         pc1.x = eventX1
@@ -166,28 +153,13 @@ class MapTest {
         pc2.size = 1f
         pointerCoords[0] = pc1
         pointerCoords[1] = pc2
-
-        /*
-     * Events sequence of zoom gesture:
-     *
-     * 1. Send ACTION_DOWN event of one start point
-     * 2. Send ACTION_POINTER_DOWN of two start points
-     * 3. Send ACTION_MOVE of two middle points
-     * 4. Repeat step 3 with updated middle points (x,y), until reach the end points
-     * 5. Send ACTION_POINTER_UP of two end points
-     * 6. Send ACTION_UP of one end point
-     */
-
         try {
-            // Step 1
             event = MotionEvent.obtain(
                 startTime, eventTime,
                 MotionEvent.ACTION_DOWN, 1, properties,
                 pointerCoords, 0, 0, 1f, 1f, 0, 0, 0, 0
             )
             injectMotionEventToUiController(uiController, event)
-
-            // Step 2
             event = MotionEvent.obtain(
                 startTime,
                 eventTime,
@@ -205,20 +177,15 @@ class MapTest {
                 0
             )
             injectMotionEventToUiController(uiController, event)
-
-            // Step 3, 4
             val moveEventNumber = duration / eventMinInterval
-
             val stepX1: Float
             val stepY1: Float
             val stepX2: Float
             val stepY2: Float
-
             stepX1 = ((endPoint1.x - startPoint1.x) / moveEventNumber).toFloat()
             stepY1 = ((endPoint1.y - startPoint1.y) / moveEventNumber).toFloat()
             stepX2 = ((endPoint2.x - startPoint2.x) / moveEventNumber).toFloat()
             stepY2 = ((endPoint2.y - startPoint2.y) / moveEventNumber).toFloat()
-
             for (i in 0 until moveEventNumber) {
                 // Update the move events
                 eventTime += eventMinInterval
@@ -242,8 +209,6 @@ class MapTest {
                 )
                 injectMotionEventToUiController(uiController, event)
             }
-
-            // Step 5
             pc1.x = endPoint1.x.toFloat()
             pc1.y = endPoint1.y.toFloat()
             pc2.x = endPoint2.x.toFloat()
@@ -269,8 +234,6 @@ class MapTest {
                 0
             )
             injectMotionEventToUiController(uiController, event)
-
-            // Step 6
             eventTime += eventMinInterval
             event = MotionEvent.obtain(
                 startTime, eventTime,
