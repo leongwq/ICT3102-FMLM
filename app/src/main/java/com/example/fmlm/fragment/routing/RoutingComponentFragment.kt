@@ -2,6 +2,7 @@ package com.example.fmlm.fragment.routing
 
 import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
@@ -56,7 +57,10 @@ class RoutingComponentFragment : Fragment() {
     private lateinit var textInputDestination: TextInputLayout
 
     // GPS
-    private var permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION)
+    /**
+     * fixed one from fine to coarse
+     */
+    private var permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
     private val PERMISSION_REQUEST = 10
     lateinit var locationManager : LocationManager
     private var currentLocation: Location? = null
@@ -91,6 +95,18 @@ class RoutingComponentFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+        val permissions = arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (checkPermission(permissions)){
+
+        }
+        else{
+            ActivityCompat.requestPermissions(activity!!, permissions, 0)
+        }
+
+        /**
+         * Line below uses external storage but I'm not sure about how to fix this
+         */
         val v = inflater.inflate(R.layout.routing_component_fragment, container, false)
         nameTextBox = v.findViewById(R.id.TextInputEditText)
 
@@ -156,7 +172,6 @@ class RoutingComponentFragment : Fragment() {
         handler.postDelayed(r, 0)
     }
 
-    @SuppressLint("MissingPermission")
     private fun getLocation(){
 
         // Set up LocationManager and Listener
@@ -165,8 +180,10 @@ class RoutingComponentFragment : Fragment() {
         hasNetwork = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
         Log.e("first update location", "first updating location (gps)")
         val listener = MyListener()
-        //check if permission is granted first
-        if (isPermissionGranted(ACCESS_COARSE_LOCATION)) {
+        /**
+         * check if permission is granted first, if not ask for it
+         */
+        if (checkPermission(permissions)) {
             // we have permissions
             if(hasGPS || hasNetwork)
             {
@@ -226,8 +243,7 @@ class RoutingComponentFragment : Fragment() {
             //currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         }
         else{
-            //no permissions
-            Log.e("orph", "no-permission")
+            requestPermissions(permissions, PERMISSION_REQUEST)
         }
     }
 
@@ -272,8 +288,8 @@ class RoutingComponentFragment : Fragment() {
 
         }
 
-        val permissions = arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        ActivityCompat.requestPermissions(activity!!, permissions, 0)
+
+
 
         // Initialize the osmdroid configuration
         Configuration.getInstance()
@@ -453,38 +469,44 @@ class RoutingComponentFragment : Fragment() {
     }
 
     fun updateRoute(){
+        /**
+         * Added currentlocation check here so app doesn't crash if no location is retrieved
+         */
+        if(currentLocation != null){
+            Log.e("e", currentLocation.toString())
+            Log.e("update route (gps)", "updating route (gps)")
+            val start = GeoPoint(currentLocation!!.latitude, currentLocation!!.longitude)
+            //mapView.overlays.clear()
 
-        Log.e("update route (gps)", "updating route (gps)")
-        val start = GeoPoint(currentLocation!!.latitude, currentLocation!!.longitude)
-        //mapView.overlays.clear()
+            geoCoder = GeocoderNominatim("FMLM/1.0")
 
-        geoCoder = GeocoderNominatim("FMLM/1.0")
+            // Place marker at start point
+            startMarker.position = start
+            startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            startMarker.title = "Current Location"
 
-        // Place marker at start point
-        startMarker.position = start
-        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-        startMarker.title = "Current Location"
+            if(curDestination == GeoPoint(0.0,0.0))
+                return
+            // Place marker at end point
+            endMarker.position = curDestination
+            endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
 
-        if(curDestination == GeoPoint(0.0,0.0))
-            return
-        // Place marker at end point
-        endMarker.position = curDestination
-        endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            // Routing
+            val waypoints = java.util.ArrayList<GeoPoint>()
+            waypoints.clear()
+            waypoints.add(start)
+            waypoints.add(curDestination)
 
-        // Routing
-        val waypoints = java.util.ArrayList<GeoPoint>()
-        waypoints.clear()
-        waypoints.add(start)
-        waypoints.add(curDestination)
+            // Get road from osrm
+            var roadManager : OSRMRoadManager = OSRMRoadManager(activity)
+            roadManager.setService("http://47.74.218.117:8000/route/v1/walking/")
+            //roadManager.setService("http://47.74.218.117:8000/route/v1/driving/")
+            val road = roadManager.getRoad(waypoints)
 
-        // Get road from osrm
-        var roadManager : OSRMRoadManager = OSRMRoadManager(activity)
-        roadManager.setService("http://47.74.218.117:8000/route/v1/walking/")
-        //roadManager.setService("http://47.74.218.117:8000/route/v1/driving/")
-        val road = roadManager.getRoad(waypoints)
+            // Draw Polylines along the routes
+            addRoad(road)
+        }
 
-        // Draw Polylines along the routes
-        addRoad(road)
     }
 
     fun addRoad(r: Road){
@@ -498,47 +520,49 @@ class RoutingComponentFragment : Fragment() {
     }
 
     fun navigateRoute(){
-
-        val start = GeoPoint(currentLocation!!.latitude, currentLocation!!.longitude)
-        Log.e("gps loc", currentLocation!!.latitude.toString())
-        Log.e("gps loc", currentLocation!!.longitude.toString())
+        if (currentLocation!=null) {
+            val start = GeoPoint(currentLocation!!.latitude, currentLocation!!.longitude)
+            Log.e("gps loc", currentLocation!!.latitude.toString())
+            Log.e("gps loc", currentLocation!!.longitude.toString())
 //        mapView.setTileSource(TileSourceFactory.MAPNIK)
 //        mapView.controller.setZoom(15.0)
 //        mapView.controller.setCenter(start)
 //        mapView.setMultiTouchControls(true)
-        //mapView.overlays.clear()
+            //mapView.overlays.clear()
 
-        geoCoder = GeocoderNominatim("FMLM/1.0")
+            geoCoder = GeocoderNominatim("FMLM/1.0")
 
-        // Place marker at start point
-        //val startMarker = Marker(mapView)
-        startMarker.position = start
-        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-        //mapView.overlays.add(startMarker)
-        //startMarker.title = "Bedok MRT"
+            // Place marker at start point
+            //val startMarker = Marker(mapView)
+            startMarker.position = start
+            startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            //mapView.overlays.add(startMarker)
+            //startMarker.title = "Bedok MRT"
 
-        // Place marker at end point
-        //val endMarker = Marker(mapView)
-        endMarker.position = curDestination
-        endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-       // mapView.overlays.add(endMarker)
+            // Place marker at end point
+            //val endMarker = Marker(mapView)
+            endMarker.position = curDestination
+            endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            // mapView.overlays.add(endMarker)
 
-        // Routing
-        val waypoints = java.util.ArrayList<GeoPoint>()
-        waypoints.clear()
-        waypoints.add(start)
-        waypoints.add(curDestination)
+            // Routing
+            val waypoints = java.util.ArrayList<GeoPoint>()
+            waypoints.clear()
+            waypoints.add(start)
+            waypoints.add(curDestination)
 
-        // Get road from osrm
-        var roadManager : OSRMRoadManager = OSRMRoadManager(activity)
-        roadManager.setService("http://47.74.218.117:8000/route/v1/walking/")
-        //roadManager.setService("http://47.74.218.117:8000/route/v1/driving/")
-        val road = roadManager.getRoad(waypoints)
+            // Get road from osrm
+            var roadManager: OSRMRoadManager = OSRMRoadManager(activity)
+            roadManager.setService("http://47.74.218.117:8000/route/v1/walking/")
+            //roadManager.setService("http://47.74.218.117:8000/route/v1/driving/")
+            val road = roadManager.getRoad(waypoints)
 
-        val locationBundle =  geoCoder.getFromLocation(curDestination.latitude,curDestination.longitude,1).get(0)
-        //var roadDestName = locationBundle.getAddressLine(0)
-        var roadDestName = locationBundle.extras.get("display_name").toString()
-        val separated = roadDestName.split(",")
+            val locationBundle =
+                geoCoder.getFromLocation(curDestination.latitude, curDestination.longitude, 1)
+                    .get(0)
+            //var roadDestName = locationBundle.getAddressLine(0)
+            var roadDestName = locationBundle.extras.get("display_name").toString()
+            val separated = roadDestName.split(",")
 //        val max = locationBundle.maxAddressLineIndex
 //        var i = 1
 //        while(i != max)
@@ -547,11 +571,15 @@ class RoutingComponentFragment : Fragment() {
 //            roadDestName += locationBundle.getAddressLine(i)
 //            ++i
 //        }
-        Log.e("gps loc name", ""+locationBundle.extras.get("display_name").toString())
-        textInputDestination.editText!!.setText(separated[0], TextView.BufferType.EDITABLE)
+            Log.e("gps loc name", "" + locationBundle.extras.get("display_name").toString())
+            textInputDestination.editText!!.setText(separated[0], TextView.BufferType.EDITABLE)
 
-        // Draw Polylines along the routes
-        addRoad(road)
+            // Draw Polylines along the routes
+            addRoad(road)
+        }
+        else{
+            Toast.makeText(context, "Could not get current location", Toast.LENGTH_LONG)
+        }
     }
 
     private fun drawRoute(waypoints: ArrayList<GeoPoint>) {
@@ -572,9 +600,6 @@ class RoutingComponentFragment : Fragment() {
     }
 
     fun getLocationPermission() {
-        var permissions = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)
-        ActivityCompat.requestPermissions(activity!!, permissions, 0)
-        permissions = arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION)
         ActivityCompat.requestPermissions(activity!!, permissions, 0)
 
         Toast.makeText(activity, "Required for GPS", Toast.LENGTH_LONG).show()
