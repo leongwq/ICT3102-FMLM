@@ -8,6 +8,9 @@ apply plugin: 'androidx.navigation.safeargs'
 
 apply plugin: "org.jetbrains.kotlin.kapt"
 
+apply plugin: 'com.justpinch.androidanalyzer'
+
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -115,4 +118,15 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:21.0.0'
     //implementation 'com.google.firebase:firebase-auth:18.1.0'
 }
+
+androidAnalyzer {
+    applicationId = 'com.example.fmlm'
+    projectName = 'FMLM'
+    projectVersion = '0.1.0'
+    detekt = true
+    unitTestCoverage = true
+    packageName = 'com.example.fmlm'
+    buildVariant = 'debug'
+}
+
 apply plugin: 'com.google.gms.google-services'

@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: org.osmdroid:osmdroid-geopackage:6.1.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/80974f22861f178e7a1cff3bc301be2f/osmdroid-geopackage-6.1.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/80974f22861f178e7a1cff3bc301be2f/osmdroid-geopackage-6.1.0/res" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.osmdroid/osmdroid-geopackage/6.1.0/be3d1c27e3eccbb15c448ad616c0ab78582b80d2/osmdroid-geopackage-6.1.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.osmdroid/osmdroid-geopackage/6.1.0/8c7cef826a1f070e723a096543b0dfc972f9a658/osmdroid-geopackage-6.1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
