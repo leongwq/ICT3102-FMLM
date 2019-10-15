@@ -1,8 +1,11 @@
 package com.example.fmlm
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -33,6 +36,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.string.drawer_open, R.string.drawer_close)
         drawer.addDrawerListener(toggle)
         toggle.syncState()
+        if(savedInstanceState == null){
+            val transaction = supportFragmentManager.beginTransaction()
+            var fragment: Fragment = ProfileComponentFragment()
+            transaction.replace(R.id.fragment_frame_layout, fragment)
+            transaction.addToBackStack(null)
+            transaction.commit()
+        }
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
@@ -43,7 +53,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_routingComponentFragment -> fragment = RoutingComponentFragment()
             R.id.nav_loginComponentFragment -> fragment = LoginComponentFragment()
         }
-        transaction.replace(R.id.nav_host_fragment, fragment)
+        transaction.replace(R.id.fragment_frame_layout, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
         drawer.closeDrawer(GravityCompat.START)

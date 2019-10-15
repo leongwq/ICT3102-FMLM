@@ -80,7 +80,7 @@ class RegistrationComponentFragment : Fragment() {
     private fun onBackToLoginPress() {
         val fragment: Fragment = LoginComponentFragment()
         val transaction = fragmentManager?.beginTransaction()!!
-        transaction.replace(R.id.nav_host_fragment, fragment)
+        transaction.replace(R.id.fragment_frame_layout, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
     }

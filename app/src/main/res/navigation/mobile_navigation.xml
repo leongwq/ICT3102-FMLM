@@ -5,7 +5,8 @@
             app:startDestination="@id/profileComponentFragment">
     <fragment android:id="@+id/profileComponentFragment"
               android:name="com.example.fmlm.fragment.profile.ProfileComponentFragment"
-              android:label="profile_component_fragment" tools:layout="@layout/profile_component_fragment"/>
+              android:label="profile_component_fragment"
+                tools:layout="@layout/profile_component_fragment" />
     <fragment android:id="@+id/routingComponentFragment"
               android:name="com.example.fmlm.fragment.routing.RoutingComponentFragment"
               android:label="routing_component_fragment" tools:layout="@layout/routing_component_fragment"/>
@@ -14,8 +15,18 @@
               android:label="arComponentFragment"/>
     <fragment android:id="@+id/loginComponentFragment"
               android:name="com.example.fmlm.fragment.login.LoginComponentFragment"
-              android:label="login_component_fragment" tools:layout="@layout/login_component_fragment"/>
+              android:label="login_component_fragment" tools:layout="@layout/login_component_fragment">
+        <action
+            android:id="@+id/loginToRegister"
+            app:destination="@id/registrationComponentFragment"
+            app:popUpTo="@id/registrationComponentFragment" />
+    </fragment>
     <fragment android:id="@+id/registrationComponentFragment"
               android:name="com.example.fmlm.fragment.login.LoginComponentFragment"
-              android:label="registration_component_fragment" tools:layout="@layout/registration_component_fragment"/>
+              android:label="registration_component_fragment" tools:layout="@layout/registration_component_fragment">
+        <action
+            android:id="@+id/registerToLogin"
+            app:destination="@id/loginComponentFragment"
+            app:popUpTo="@id/loginComponentFragment" />
+    </fragment>
 </navigation>
