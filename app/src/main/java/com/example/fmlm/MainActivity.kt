@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.AttributeSet
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -28,9 +29,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
+
         drawer = findViewById(R.id.drawer_layout)
         val navigationView: NavigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
+        navigationView.setCheckedItem(R.id.nav_profileComponentFragment)
 
         val toggle = ActionBarDrawerToggle(this, drawer, toolbar,
             R.string.drawer_open, R.string.drawer_close)
@@ -48,6 +51,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         val transaction = supportFragmentManager.beginTransaction()
         var fragment: Fragment = ProfileComponentFragment()
+
         when (p0.itemId) {
             R.id.nav_profileComponentFragment -> fragment = ProfileComponentFragment()
             R.id.nav_routingComponentFragment -> fragment = RoutingComponentFragment()

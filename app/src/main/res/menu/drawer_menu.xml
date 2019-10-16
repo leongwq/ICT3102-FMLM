@@ -13,11 +13,12 @@
                 android:id="@+id/nav_routingComponentFragment"
                 android:icon="@drawable/ic_directions_walk_black_24dp"
                 android:title="@string/routing_component"/>
-    </group>
-
-    <item
+        <item
             android:id="@+id/nav_loginComponentFragment"
             android:icon="@drawable/ic_directions_walk_black_24dp"
             android:title="Sign out"/>
+    </group>
+
+
 
 </tools:menu>
