@@ -24,7 +24,7 @@ class RoutingTest {
     fun init() {
         val transaction = rule.getActivity().getSupportFragmentManager().beginTransaction()
         var fragment: Fragment = RoutingComponentFragment()
-        transaction.replace(R.id.nav_host_fragment, fragment)
+        transaction.replace(R.id.fragment_frame_layout, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
         //transaction.commitAllowingStateLoss()
