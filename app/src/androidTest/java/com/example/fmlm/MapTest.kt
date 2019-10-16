@@ -35,7 +35,7 @@ class MapTest {
         var fragment: Fragment = RoutingComponentFragment()
         transaction.replace(R.id.fragment_frame_layout, fragment)
         transaction.addToBackStack(null)
-        transaction.commit()
+        transaction.commitAllowingStateLoss()
         //transaction.commitAllowingStateLoss()
     }
 
@@ -50,7 +50,7 @@ class MapTest {
 
     }
 
-    val amount = 300 //change this to change the amount of zoom
+    val amount = 100 //change this to change the amount of zoom
 
     fun pinchOut(): ViewAction {
         return object : ViewAction {
