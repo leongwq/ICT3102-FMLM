@@ -20,10 +20,10 @@
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 android:background="@android:color/holo_green_dark"/>
-        <FrameLayout
-            android:id="@+id/fragment_frame_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            <FrameLayout
+                android:id="@+id/fragment_frame_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
