@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.FrameLayout
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -17,6 +18,9 @@ import com.example.fmlm.fragment.login.LoginComponentFragment
 import com.example.fmlm.fragment.profile.ProfileComponentFragment
 import com.example.fmlm.fragment.routing.RoutingComponentFragment
 import com.google.android.material.navigation.NavigationView
+
+
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -65,9 +69,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onBackPressed() {
+        val fragments = supportFragmentManager.backStackEntryCount
+        if (fragments == 1) {
+            finish()
+        }
         if(drawer.isDrawerOpen(GravityCompat.START))
             drawer.closeDrawer(GravityCompat.START)
-        else
-            super.onBackPressed()
+        super.onBackPressed()
+
     }
 }
