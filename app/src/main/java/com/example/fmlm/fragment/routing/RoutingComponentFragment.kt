@@ -1,8 +1,7 @@
 package com.example.fmlm.fragment.routing
 
 import android.Manifest
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
-import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.Manifest.permission.*
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
@@ -60,7 +59,7 @@ class RoutingComponentFragment : Fragment() {
     /**
      * fixed one from fine to coarse
      */
-    private var permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
+    private var permissions = arrayOf(WRITE_EXTERNAL_STORAGE, ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)
     private val PERMISSION_REQUEST = 10
     lateinit var locationManager : LocationManager
     private var currentLocation: Location? = null
@@ -95,8 +94,6 @@ class RoutingComponentFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        val permissions = arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (checkPermission(permissions)){
 
         }
@@ -369,8 +366,7 @@ class RoutingComponentFragment : Fragment() {
     private fun startLocationUpdates() {
         if (ContextCompat.checkSelfPermission( getContext()!!,Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED )
         {
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+            requestPermissions(permissions,
                 1)//request code 1 for coarse location
         }
         fusedLocationClient.requestLocationUpdates(locationRequest,
@@ -462,9 +458,9 @@ class RoutingComponentFragment : Fragment() {
             return
         }
         Log.e("buttonSearch",destPoint.toString())
-        val handler = Handler();
+        val handler = Handler()
         val r = setRoutes()
-        handler.postDelayed(r, 0);
+        handler.postDelayed(r, 0)
         //navigateRoute()
     }
 
@@ -578,7 +574,15 @@ class RoutingComponentFragment : Fragment() {
             addRoad(road)
         }
         else{
-            Toast.makeText(context, "Could not get current location", Toast.LENGTH_LONG)
+            if(checkPermission(permissions)){
+                Toast.makeText(context, "Could not get current location", Toast.LENGTH_LONG).show()
+            }
+            else
+            {
+                Toast.makeText(context, "Please allow GPS/Storage Permissions for FMLM", Toast.LENGTH_LONG).show()
+                ActivityCompat.requestPermissions(activity!!, permissions, 0)
+            }
+
         }
     }
 
@@ -666,7 +670,7 @@ class RoutingComponentFragment : Fragment() {
             }
         } catch (e: Exception) {
             Log.e("geo exceptions", e.toString() )
-            Toast.makeText(activity, "Geocoding error !", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, "Geocoding error !" + e.toString(), Toast.LENGTH_LONG).show()
         }
         return geoResults
     }
