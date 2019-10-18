@@ -92,10 +92,7 @@ class RoutingComponentFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        if (checkPermission(permissions)){
-
-        }
-        else{
+        if (!checkPermission(permissions)){
             ActivityCompat.requestPermissions(activity!!, permissions, 0)
         }
 
@@ -440,22 +437,48 @@ class RoutingComponentFragment : Fragment() {
     }
 
     fun buttonPressSearch(){
-        val destName = nameTextBox.getText()
-        val destPoint= getCoord(destName.toString())
-        curDestination = destPoint
-        curDestName = destName.toString()
-        Log.e("buttonSearch", nameTextBox.getText().toString())
-        if(destPoint == GeoPoint(0.0,0.0))
-        {
-            Log.e("buttonSearch", "Location Not Found")
-            Toast.makeText(activity, "Address not found!", Toast.LENGTH_SHORT).show()
-            return
+        if(checkPermission(permissions)){
+            if (currentLocation!=null) {
+                val destName = nameTextBox.getText()
+                val destPoint = getCoord(destName.toString())
+                curDestination = destPoint
+                curDestName = destName.toString()
+                Log.e("buttonSearch", nameTextBox.getText().toString())
+                if (destPoint == GeoPoint(0.0, 0.0)) {
+                    Log.e("buttonSearch", "Location Not Found")
+                    Toast.makeText(activity, "Address not found!", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                Log.e("buttonSearch", destPoint.toString())
+                val handler = Handler()
+                val r = setRoutes()
+                handler.postDelayed(r, 0)
+                //navigateRoute()
+            }
+            else {
+                //Try to get location again
+                locationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                val localGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                if(localGPS != null) {
+                    currentLocation = localGPS
+                    buttonPressSearch()
+                }
+                else{
+                    val localNetworl = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                    if(localNetworl != null) {
+                        currentLocation = localNetworl
+                        buttonPressSearch()
+                    }
+                    else{
+                        Toast.makeText(context, "Could not get current location", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
         }
-        Log.e("buttonSearch",destPoint.toString())
-        val handler = Handler()
-        val r = setRoutes()
-        handler.postDelayed(r, 0)
-        //navigateRoute()
+        else {
+            Toast.makeText(context, "Please allow GPS/Storage Permissions for FMLM", Toast.LENGTH_LONG).show()
+            ActivityCompat.requestPermissions(activity!!, permissions, 0)
+        }
     }
 
     fun updateRoute(){
