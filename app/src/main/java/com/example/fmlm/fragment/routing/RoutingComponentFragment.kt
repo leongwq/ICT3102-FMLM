@@ -1,8 +1,6 @@
 package com.example.fmlm.fragment.routing
 
-import android.Manifest
 import android.Manifest.permission.*
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Address
@@ -10,10 +8,8 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.*
-import androidx.lifecycle.ViewModelProviders
 import android.preference.PreferenceManager
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,10 +20,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.core.content.PermissionChecker.checkCallingOrSelfPermission
-
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.example.fmlm.R
-import com.google.android.gms.location.*
-import com.google.android.gms.tasks.Task
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import org.osmdroid.bonuspack.location.GeocoderNominatim
@@ -146,10 +144,7 @@ class RoutingComponentFragment : Fragment() {
 //        }
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if(checkPermission(permissions)){
-
-            }
-            else{
+            if (!checkPermission(permissions)) {
                 requestPermissions(permissions,PERMISSION_REQUEST)
             }
         }
@@ -273,11 +268,11 @@ class RoutingComponentFragment : Fragment() {
         if (Build.VERSION.SDK_INT > 23 &&
             ContextCompat.checkSelfPermission(
                 activity!!,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
+                ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
             || ContextCompat.checkSelfPermission(
                 activity!!,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             getLocationPermission()
@@ -308,7 +303,7 @@ class RoutingComponentFragment : Fragment() {
 
     inner class updateRoutes:Runnable{
         override fun run(){
-            android.os.Process.setThreadPriority((android.os.Process.THREAD_PRIORITY_BACKGROUND))
+            Process.setThreadPriority((Process.THREAD_PRIORITY_BACKGROUND))
             //cTask.setImageDecodeThread(Thread.currentThread())
             updateRoute()
         }
@@ -364,10 +359,9 @@ class RoutingComponentFragment : Fragment() {
     }
 
     private fun startLocationUpdates() {
-        if (ContextCompat.checkSelfPermission( getContext()!!,Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED )
+        if (ContextCompat.checkSelfPermission( getContext()!!, ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED )
         {
-            requestPermissions(permissions,
-                1)//request code 1 for coarse location
+            requestPermissions(permissions, 1)//request code 1 for coarse location
         }
         fusedLocationClient.requestLocationUpdates(locationRequest,
             locationCallback,
@@ -494,9 +488,10 @@ class RoutingComponentFragment : Fragment() {
             waypoints.add(curDestination)
 
             // Get road from osrm
-            var roadManager : OSRMRoadManager = OSRMRoadManager(activity)
+            val roadManager = OSRMRoadManager(activity)
             roadManager.setService("http://47.74.218.117:8000/route/v1/walking/")
             //roadManager.setService("http://47.74.218.117:8000/route/v1/driving/")
+
             val road = roadManager.getRoad(waypoints)
 
             // Draw Polylines along the routes
@@ -548,7 +543,7 @@ class RoutingComponentFragment : Fragment() {
             waypoints.add(curDestination)
 
             // Get road from osrm
-            var roadManager: OSRMRoadManager = OSRMRoadManager(activity)
+            var roadManager = OSRMRoadManager(activity)
             roadManager.setService("http://47.74.218.117:8000/route/v1/walking/")
             //roadManager.setService("http://47.74.218.117:8000/route/v1/driving/")
             val road = roadManager.getRoad(waypoints)
@@ -570,8 +565,18 @@ class RoutingComponentFragment : Fragment() {
             Log.e("gps loc name", "" + locationBundle.extras.get("display_name").toString())
             textInputDestination.editText!!.setText(separated[0], TextView.BufferType.EDITABLE)
 
+            Log.e("HELLO WORLD", "HI")
             // Draw Polylines along the routes
-            addRoad(road)
+                addRoad(road)
+            // Test Response Time to Draw Marker
+//            for(i in 1..100) {
+//                val startTime = System.nanoTime()
+//                addRoad(road)
+//                val endTime = System.nanoTime()
+//                val methodDuration = (endTime - startTime)
+//                Log.e("Time to  Draw Marker: ", methodDuration.toString())
+//            }
+
         }
         else{
             if(checkPermission(permissions)){
