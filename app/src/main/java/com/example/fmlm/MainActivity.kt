@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if(savedInstanceState == null){
             val transaction = supportFragmentManager.beginTransaction()
             var fragment: Fragment = ProfileComponentFragment()
-            transaction.replace(R.id.fragment_frame_layout, fragment)
+            transaction.replace(R.id.fragment_frame_layout, fragment, "profile")
             transaction.addToBackStack(null)
             transaction.commit()
         }
@@ -47,13 +47,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         val transaction = supportFragmentManager.beginTransaction()
         var fragment: Fragment = ProfileComponentFragment()
-
+        var tag = ""
         when (p0.itemId) {
             R.id.nav_profileComponentFragment -> fragment = ProfileComponentFragment()
             R.id.nav_routingComponentFragment -> fragment = RoutingComponentFragment()
             R.id.nav_loginComponentFragment -> fragment = LoginComponentFragment()
         }
-        transaction.replace(R.id.fragment_frame_layout, fragment)
+        when (p0.itemId) {
+            R.id.nav_profileComponentFragment -> tag = "profile"
+            R.id.nav_routingComponentFragment -> tag = "routing"
+            R.id.nav_loginComponentFragment -> tag = "login"
+        }
+        transaction.replace(R.id.fragment_frame_layout, fragment, tag)
         transaction.addToBackStack(null)
         transaction.commit()
         drawer.closeDrawer(GravityCompat.START)
@@ -68,6 +73,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if(drawer.isDrawerOpen(GravityCompat.START))
             drawer.closeDrawer(GravityCompat.START)
         super.onBackPressed()
-
+        val last = supportFragmentManager.fragments.lastOrNull()
+        if(last!=null){
+            val tag = last.tag
+            val navigationView: NavigationView = findViewById(R.id.nav_view)
+            when(tag){
+                "profile" -> navigationView.setCheckedItem(R.id.nav_profileComponentFragment)
+                "routing" -> navigationView.setCheckedItem(R.id.nav_routingComponentFragment)
+                "login" -> navigationView.setCheckedItem(R.id.nav_loginComponentFragment)
+            }
+        }
     }
 }

@@ -456,23 +456,7 @@ class RoutingComponentFragment : Fragment() {
                 //navigateRoute()
             }
             else {
-                //Try to get location again
-                locationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                val localGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                if(localGPS != null) {
-                    currentLocation = localGPS
-                    buttonPressSearch()
-                }
-                else{
-                    val localNetworl = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                    if(localNetworl != null) {
-                        currentLocation = localNetworl
-                        buttonPressSearch()
-                    }
-                    else{
-                        Toast.makeText(context, "Could not get current location", Toast.LENGTH_LONG).show()
-                    }
-                }
+                Toast.makeText(context, "Could not get current location", Toast.LENGTH_LONG).show()
             }
         }
         else {
