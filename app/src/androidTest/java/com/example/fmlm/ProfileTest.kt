@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.runner.AndroidJUnit4
 
 import org.junit.Test
@@ -15,6 +14,13 @@ import androidx.test.rule.ActivityTestRule
 import org.hamcrest.CoreMatchers.*
 import org.junit.Rule
 import org.junit.Before
+import androidx.test.espresso.action.ViewActions.typeText
+import android.widget.EditText
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.*
 
 
 /**
@@ -49,7 +55,8 @@ class ProfileTest {
     @Test
     fun profileTest() {
         //textviews
-        onView(withId(R.id.edittext_name)).perform(typeText("Orph"))
+        Espresso.onView(ViewMatchers.withId(R.id.edittext_name))
+            .perform(ViewActions.replaceText("Orph")).perform(ViewActions.closeSoftKeyboard())
         //close keyboard here because edittext_reason is hidden by keyboard
         onView(withId(R.id.edittext_age)).perform(typeText("24")).perform(closeSoftKeyboard())
         //spinner
