@@ -33,8 +33,7 @@ class RoutingTest {
     @Test
     fun getFiveCities() {
         var cities: Array<String> = arrayOf("Phoenix", "Portland", "Seattle", "Houston", "Miami")
-        //can be used for stress testing maybe???
-        for (i in 1..10){
+        for (i in 1..100){
             onView(withId(R.id.TextInputEditText)).perform(replaceText(cities[(i-1)%5])).perform(closeSoftKeyboard())
             onView(withId(R.id.button_confirm)).perform(click())
         }
